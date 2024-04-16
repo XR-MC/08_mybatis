@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.shifan.mapper.StudentMapper">
+    <!-- if标签使用示例-->
+    <select id="findByExp" parameterType="edu.shifan.pojo.Student" resultType="edu.shifan.pojo.Student">
+        select * from sys_students where 1=1
+
+        <if test="stuName!=null and stuName !=''">
+            and stu_name like "%"#{stuName}"%"
+        </if>
+
+        <if test="gender!=null">
+            and gender=#{gender}
+        </if>
+
+        <if test="gradeId!=null and gradeId!=0">
+            and grade_Id=#{gradeId}
+        </if>
+    </select>
+
+    <!-- where标签使用示例-->
+    <select id="findByExp2" parameterType="edu.shifan.pojo.Student" resultType="edu.shifan.pojo.Student">
+        select * from sys_students
+
+        <where>
+            <if test="stuName!=null and stuName !=''">
+                and stu_name like "%"#{stuName}"%"
+            </if>
+
+            <if test="gender!=null">
+                and gender=#{gender}
+            </if>
+
+            <if test="gradeId!=null and gradeId!=0">
+                and grade_Id=#{gradeId}
+            </if>
+        </where>
+    </select>
+
+    <!-- foreach使用示例-->
+    <select id="findByIds" parameterType="java.util.List" resultType="edu.shifan.pojo.Student">
+        select * from sys_students
+        <where>
+            <if test="list != null and list.size()!=0">
+                <!--
+                    foreach：遍历集合对象
+                    collection：待遍历集合对象
+                    item：元素存储的变量名
+                    open：拼接SQL语句的开始
+                    close：拼接SQL语句的结束
+                    separator：分隔符
+                -->
+                <foreach collection="list" item="id" open="stu_no in (" close=")" separator=",">
+                    ${id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!-- choose标签示例-->
+    <select id="findByExp3" parameterType="edu.shifan.pojo.Student" resultType="edu.shifan.pojo.Student">
+        select * from sys_students
+
+        <where>
+            <!--
+                choose...when相当于C/Java中的switch...case语句
+                    choose      == switch
+                    when        == case
+                    otherwise   == default
+            -->
+            <choose>
+                <when test="stuName!=null and stuName!=''">
+                    and stu_name like "%"#{stuName}"%"
+                </when>
+
+                <when test="gender!=null">
+                    and gender=#{gender}
+                </when>
+
+                <when test="gradeId!=null and gradeId!=0">
+                    and grade_id=#{gradeId}
+                </when>
+
+                <!--
+                <otherwise>
+                    所有when标签都不满足时，执行该代码段
+                </otherwise>
+                -->
+            </choose>
+        </where>
+    </select>
+</mapper>
